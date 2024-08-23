@@ -30,13 +30,16 @@ public class BankaServisServiceImpl implements BankaServisService {
         if (bankaServisEntity == null) {
             return BankaServerResponse.builder()
                     .message("Kart bilgileri hatalı")
+                    .oid(request.getOid())
                     .status("FAILURE")
                     .build();
         }
 
         if (bankaServisEntity.getBakiye().compareTo(request.getOdenecekTutar()) < 0) {
             return BankaServerResponse.builder()
+                    .bankaAdi(bankaServisEntity.getBankaAdi())
                     .message("Yetersiz bakiye")
+                    .oid(request.getOid())
                     .status("FAILURE")
                     .build();
         }
