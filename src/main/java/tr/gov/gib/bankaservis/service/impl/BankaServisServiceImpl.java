@@ -7,6 +7,7 @@ import tr.gov.gib.bankaservis.object.response.BankaServerResponse;
 import tr.gov.gib.bankaservis.repository.BankaServisRepository;
 import tr.gov.gib.bankaservis.service.BankaServisService;
 import tr.gov.gib.bankaservis.util.HashUtil;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class BankaServisServiceImpl implements BankaServisService {
@@ -17,14 +18,18 @@ public class BankaServisServiceImpl implements BankaServisService {
         this.bankaServisRepository = bankaServisRepository;
     }
 
+    @Value("${banka.salt}")
+    private String salt;
+
     @Override
     public BankaServerResponse odemeYap(BankaServerRequest request) {
         //verilerin kontrol repo
+
         BankaServis bankaServisEntity = bankaServisRepository.findByKrediKartiAndKartSahibiAndCcvAndSkAyAndSkYil(
                 request.getKartNo(), request.getKartSahibi(), request.getCcv().shortValue(),
                 request.getSonKullanimTarihiAy().shortValue(), request.getSonKullanimTarihiYil().shortValue());
-
-        String generatedHash = HashUtil.generateSHA256(request.getOid(), request.getKartNo(), request.getOdenecekTutar().toString());
+        System.out.println("Request: " + request);
+        String generatedHash = HashUtil.generateSHA256(request.getOid(), request.getKartNo(), request.getOdenecekTutar().toString(),salt);
         System.out.println("Hash: " + generatedHash);
 
         if (bankaServisEntity == null) {
@@ -32,6 +37,7 @@ public class BankaServisServiceImpl implements BankaServisService {
                     .message("Kart bilgileri hatalı")
                     .oid(request.getOid())
                     .status("FAILURE")
+                    .hash(generatedHash)
                     .build();
         }
 
@@ -41,6 +47,7 @@ public class BankaServisServiceImpl implements BankaServisService {
                     .message("Yetersiz bakiye")
                     .oid(request.getOid())
                     .status("FAILURE")
+                    .hash(generatedHash)
                     .build();
         }
 
