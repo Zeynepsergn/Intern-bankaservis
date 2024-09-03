@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: BankaServis
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gib_staj
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+    # properties:
+    #   hibernate:
+    #     dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
+
+banka:
+  salt: 38A74D716E65EB18D3331B4CE54013555BA388034508496FBE3A0BACECAAC6C7
